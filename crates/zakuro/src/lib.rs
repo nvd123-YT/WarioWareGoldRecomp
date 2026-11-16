@@ -75,7 +75,7 @@ pub fn run_with(linked: Option<Linked>, overlay: Option<Box<dyn GameOverlay>>) {
     let options = match cli::parse() {
         Ok(options) => options,
         Err(message) => {
-            eprintln!("Angry Birds Trilogy: {message}");
+            eprintln!("WarioWare Gold: {message}");
             std::process::exit(2);
         }
     };
@@ -170,7 +170,7 @@ pub fn run_with(linked: Option<Linked>, overlay: Option<Box<dyn GameOverlay>>) {
     let event_loop = EventLoop::new().expect("create an event loop");
     event_loop.set_control_flow(ControlFlow::Poll);
     if let Err(error) = event_loop.run_app(&mut app) {
-        eprintln!("Angry Birds Trilogy: {error}");
+        eprintln!("WarioWare Gold: {error}");
     }
 }
 
@@ -200,7 +200,7 @@ fn default_data_dir() -> Option<PathBuf> {
     } else {
         var("XDG_DATA_HOME").or_else(|| var("HOME").map(|home| home.join(".local/share")))
     };
-    dir.map(|dir| dir.join("angry-birds-trilogy"))
+    dir.map(|dir| dir.join("warioware-gold-recomp"))
 }
 
 /// how long ago a state was saved, as a person would say it.
@@ -529,7 +529,7 @@ impl ApplicationHandler for App {
         }
 
         let size = self.window_size();
-        let attributes = Window::default_attributes().with_title("Angry Birds Trilogy").with_inner_size(size);
+        let attributes = Window::default_attributes().with_title("WarioWare Gold").with_inner_size(size);
         let renderer = self.options.renderer.unwrap_or(match self.settings.renderer {
             Renderer::Vulkan => RendererKind::Vulkan,
             Renderer::OpenGl => RendererKind::OpenGl,
@@ -559,7 +559,7 @@ impl ApplicationHandler for App {
                 self.start();
             }
             Err(error) => {
-                eprintln!("Angry Birds Trilogy: could not start the {renderer:?} backend: {error}");
+                eprintln!("WarioWare Gold: could not start the {renderer:?} backend: {error}");
                 event_loop.exit();
             }
         }
@@ -667,7 +667,7 @@ impl App {
             self.paused = true;
         } else if let Some(rom) = self.options.rom.clone() {
             if let Err(error) = self.play(Path::new(&rom)) {
-                eprintln!("Angry Birds Recomp: {error}");
+                eprintln!("WarioWare Gold Recomp: {error}");
                 std::process::exit(1);
             }
         }
@@ -695,7 +695,7 @@ impl App {
         let known = self.library.games.iter().find(|game| game.path == path && game.problem.is_none()).map(|game| game.program_id);
         let program_id = known.or_else(|| Some(zakuro_fs::Title::load(path).ok()?.program_id()));
         if program_id.is_some_and(|id| !library::supports_game(id)) {
-            return Err("This build only supports Angry Birds Trilogy (USA and Europe releases).".to_owned());
+            return Err("This build only supports WarioWare Gold retail releases (USA, Europe and Japan).".to_owned());
         }
         self.active = self.settings.for_game(program_id);
         let started = self.start_game(path);
@@ -769,7 +769,7 @@ impl App {
             in_software.then(|| GPU_FALLBACK.to_owned()),
             outdated.then(|| {
                 format!(
-                    "{} was recompiled by an older version of Angry Birds Recomp. Recompile it again from the library to get the newest improvements.",
+                    "{} was recompiled by an older version of WarioWare Gold Recomp. Recompile it again from the library to get the newest improvements.",
                     game.name
                 )
             }),
@@ -1106,7 +1106,7 @@ impl App {
             Some(tools) if self.download_compiler && zig::download_size().is_some() && zig::can_download() => return Some(Toolchain::Download(tools)),
             Some(_) if zig::download_size().is_some() && zig::can_download() => self.menus.compiler_offer = Some(games.to_vec()),
             Some(_) if zig::download_size().is_some() => {
-                self.menus.message = Some(format!("Recompiling needs a C compiler, gcc or clang, or curl or wget for Angry Birds Recomp to download one: {error}."));
+                self.menus.message = Some(format!("Recompiling needs a C compiler, gcc or clang, or curl or wget for WarioWare Gold Recomp to download one: {error}."));
             }
             _ => self.menus.message = Some(format!("Recompiling needs a C compiler: {error}.")),
         }
@@ -1435,8 +1435,8 @@ impl App {
             }
             if let Some(window) = &self.window {
                 let title = match &self.game {
-                    Some(game) => format!("Angry Birds Recomp - {} - {}", game.name, game.system.status_line()),
-                    None => "Angry Birds Recomp".to_owned(),
+                    Some(game) => format!("WarioWare Gold Recomp - {} - {}", game.name, game.system.status_line()),
+                    None => "WarioWare Gold Recomp".to_owned(),
                 };
                 window.set_title(&title);
             }
