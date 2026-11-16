@@ -749,7 +749,7 @@ fn path() -> Option<PathBuf> {
     } else {
         var("XDG_CONFIG_HOME").or_else(|| var("HOME").map(|home| home.join(".config")))
     };
-    dir.map(|dir| dir.join("angry-birds-trilogy").join("settings.toml"))
+    dir.map(|dir| dir.join("warioware-gold-recomp").join("settings.toml"))
 }
 
 #[cfg(test)]
