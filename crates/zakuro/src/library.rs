@@ -265,7 +265,7 @@ fn addon(path: &Path) -> Option<Result<Addon, String>> {
 fn read_or_list_unreadable(path: &Path, data_dir: Option<&Path>) -> Game {
     std::panic::catch_unwind(|| read_game(path, data_dir)).unwrap_or_else(|_| {
         log::error!("reading {} failed", path.display());
-        unplayable(path, "Angry Birds Trilogy couldn't read this file, please report it".to_owned())
+        unplayable(path, "WarioWare Gold couldn't read this file, please report it".to_owned())
     })
 }
 
@@ -324,14 +324,14 @@ fn read_game(path: &Path, data_dir: Option<&Path>) -> Game {
 fn problem(error: &zakuro_fs::FsError) -> String {
     use zakuro_fs::FsError;
     match error {
-        FsError::Encrypted(_) | FsError::EncryptedCia => "Encrypted, this build needs a decrypted Angry Birds Trilogy dump".to_owned(),
+        FsError::Encrypted(_) | FsError::EncryptedCia => "Encrypted, this build needs a decrypted WarioWare Gold dump".to_owned(),
         FsError::UnreadableRomFs(_) => "Partly encrypted or damaged, it needs dumping again".to_owned(),
         FsError::NotAGame(what) => {
             let mut what = what.to_string();
             if let Some(first) = what.get_mut(..1) {
                 first.make_ascii_uppercase();
             }
-            format!("{what} cannot be opened by the Angry Birds Trilogy build")
+            format!("{what} cannot be opened by the WarioWare Gold build")
         }
         _ => format!("Can't be read, {error}"),
     }
@@ -415,10 +415,10 @@ mod tests {
 
     #[test]
     fn files_that_cant_be_played_say_why() {
-        assert_eq!(problem(&zakuro_fs::FsError::EncryptedCia), "Encrypted, this build needs a decrypted Angry Birds Trilogy dump");
+        assert_eq!(problem(&zakuro_fs::FsError::EncryptedCia), "Encrypted, this build needs a decrypted WarioWare Gold dump");
         assert_eq!(
             problem(&zakuro_fs::FsError::NotAGame("an update")),
-            "An update cannot be opened by the Angry Birds Trilogy build"
+            "An update cannot be opened by the WarioWare Gold build"
         );
     }
 
