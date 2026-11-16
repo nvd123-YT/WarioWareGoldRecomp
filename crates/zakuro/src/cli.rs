@@ -31,11 +31,11 @@ pub struct Options {
 }
 
 const USAGE: &str = "\
-angry-birds-trilogy - Angry Birds Trilogy for desktop
+warioware-gold-recomp - WarioWare Gold for desktop
 
-usage: angry-birds-trilogy [rom.3ds|.cci|.cxi|.cia] [options]
+usage: warioware-gold-recomp [rom.3ds|.cci|.cxi|.cia] [options]
 
-This build only opens the USA and Europe releases of Angry Birds Trilogy.
+This build only opens the retail releases of WarioWare Gold (USA, Europe and Japan).
 Without a game it opens a library folder and lists matching game dumps only.
 The game dump must be decrypted. Recompile it locally from the library.
 
@@ -51,9 +51,9 @@ options:
   --interpreter                    interpret everything
   --mute                           play no sound
   --data <dir>                     where settings and saves live (default:
-                                   ~/.local/share/angry-birds-trilogy,
-                                   ~/Library/Application Support/angry-birds-trilogy
-                                   or %APPDATA%\\angry-birds-trilogy)
+                                   ~/.local/share/warioware-gold-recomp,
+                                   ~/Library/Application Support/warioware-gold-recomp
+                                   or %APPDATA%\\warioware-gold-recomp)
   -h, --help                       show this message
 ";
 
