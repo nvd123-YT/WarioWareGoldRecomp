@@ -1,5 +1,5 @@
-# Builds and tests Angry Birds Trilogy on Linux, macOS and Windows.
-name: Angry Birds Trilogy CI
+# Builds and tests WarioWare Gold on Linux, macOS and Windows.
+name: WarioWare Gold CI
 
 on:
   push:
@@ -11,7 +11,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-    runs-on: \${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v7
       - name: Sound library headers
@@ -27,5 +27,5 @@ jobs:
         if: runner.os == 'Windows'
         uses: actions/upload-artifact@v7
         with:
-          name: angry-birds-trilogy-windows
-          path: target/release/angry-birds-trilogy.exe
+          name: warioware-gold-recomp-windows
+          path: target/release/warioware-gold-recomp.exe
