@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Angry Birds Trilogy
+Comment=Angry Birds Trilogy for desktop
+Exec=angry-birds-trilogy %f
+Icon=zakuro
+Terminal=false
+Categories=Game;Emulator;

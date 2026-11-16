@@ -1,0 +1,122 @@
+# On a version tag, builds Angry Birds Trilogy for Windows, Linux and macOS.
+name: Angry Birds Trilogy Release
+
+on:
+  push:
+    tags: ["v*"]
+  create:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: an existing tag to release, or a branch to build when publish is off
+        required: true
+      publish:
+        description: publish a GitHub Release after all builds succeed
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    if: ${{ github.event_name != 'create' || (github.event.ref_type == 'tag' && startsWith(github.event.ref, 'v')) }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            archive: angry-birds-trilogy-windows-x86_64.zip
+          # Build on an older Linux userspace for broader compatibility.
+          - os: ubuntu-latest
+            container: ubuntu:22.04
+            archive: angry-birds-trilogy-linux-x86_64.tar.gz
+          - os: macos-latest
+            archive: angry-birds-trilogy-macos-arm64.zip
+          - os: macos-15-intel
+            archive: angry-birds-trilogy-macos-x86_64.zip
+            try: --rasterizer software
+    runs-on: ${{ matrix.os }}
+    container: ${{ matrix.container }}
+    steps:
+      - name: Linux build tools
+        if: runner.os == 'Linux'
+        run: |
+          apt-get update
+          apt-get install -y build-essential ca-certificates clang curl file git libasound2-dev libudev-dev pkg-config zsync
+          curl -fsSL https://sh.rustup.rs | sh -s -- -y --default-toolchain none
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+
+      - name: Build desktop runtime
+        run: cargo build --release --locked -p zakuro
+
+      - name: Package for Windows
+        if: runner.os == 'Windows'
+        run: |
+          Compress-Archive -Path target/release/angry-birds-trilogy.exe, README.md, LICENSE -DestinationPath ${{ matrix.archive }}
+          $env:RUST_LOG = 'info'
+          target/release/angry-birds-trilogy.exe --test-pattern --headless 1 --mute
+
+      - name: Package for Linux
+        if: runner.os == 'Linux'
+        run: |
+          tar czf ${{ matrix.archive }} README.md LICENSE -C target/release angry-birds-trilogy
+          packaging/appimage.sh target/release/angry-birds-trilogy AngryBirdsTrilogy-x86_64.AppImage
+          APPIMAGE_EXTRACT_AND_RUN=1 RUST_LOG=info ./AngryBirdsTrilogy-x86_64.AppImage --test-pattern --headless 1 --mute
+
+      - name: Package for macOS
+        if: runner.os == 'macOS'
+        env:
+          VERSION: ${{ inputs.tag || github.ref_name }}
+        run: |
+          packaging/macos-app.sh target/release/angry-birds-trilogy "\${VERSION#v}" ${{ matrix.archive }}
+          ditto -x -k ${{ matrix.archive }} unpacked
+          RUST_LOG=info "unpacked/Angry Birds Trilogy.app/Contents/MacOS/angry-birds-trilogy" --test-pattern --headless 1 --mute ${{ matrix.try }}
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.archive }}
+          path: |
+            ${{ matrix.archive }}
+            AngryBirdsTrilogy-x86_64.AppImage*
+
+  release:
+    needs: build
+    if: ${{ needs.build.result == 'success' && (github.event_name != 'workflow_dispatch' || inputs.publish) }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag || github.ref_name }}
+        run: |
+          cat > notes.md <<'NOTES'
+          This is an Angry Birds Trilogy-only desktop runtime based on Zakuro and 3dsrecomp.
+
+          No game ROM, game assets, generated title-specific C code, or compiled title library is included. Use your own lawfully obtained, decrypted Angry Birds Trilogy dump. Add it to a library folder, then use Recompile in the application; the title-specific output stays on your computer.
+
+          Supported retail title IDs: USA 00040000000AE200 and Europe 00040000000AF400.
+
+          Windows: extract angry-birds-trilogy-windows-x86_64.zip and run angry-birds-trilogy.exe.
+          macOS Apple silicon: extract angry-birds-trilogy-macos-arm64.zip and open Angry Birds Trilogy.app.
+          macOS Intel: extract angry-birds-trilogy-macos-x86_64.zip and open Angry Birds Trilogy.app.
+          Linux: run AngryBirdsTrilogy-x86_64.AppImage, or extract angry-birds-trilogy-linux-x86_64.tar.gz and run ./angry-birds-trilogy.
+
+          The macOS app is not notarized. On first launch, allow it in System Settings > Privacy & Security > Open Anyway.
+          NOTES
+          if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            # GitHub's Releases page may have already created a draft for this tag.
+            gh release upload "$TAG" dist/* --repo "$GITHUB_REPOSITORY" --clobber
+            gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --title "Angry Birds Trilogy $TAG" --notes-file notes.md --draft=false --latest
+          else
+            gh release create "$TAG" dist/* --repo "$GITHUB_REPOSITORY" --verify-tag --title "Angry Birds Trilogy $TAG" --notes-file notes.md --generate-notes
+          fi
