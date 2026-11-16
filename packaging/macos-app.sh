@@ -1,5 +1,5 @@
 #!/bin/sh
-# packs the macOS binary as Angry Birds Trilogy.app, with MoltenVK inside so that the 3D
+# packs the macOS binary as WarioWare Gold Recomp.app, with MoltenVK inside so that the 3D
 # draws on the GPU with nothing else installed, and zips it.
 #
 #   macos-app.sh <binary> <version> <output.zip>
@@ -19,9 +19,9 @@ curl -fsSL -o "$work/moltenvk.tar" "$moltenvk_url"
 echo "$moltenvk_sha256  $work/moltenvk.tar" | shasum -a 256 -c -
 tar xf "$work/moltenvk.tar" -C "$work" MoltenVK/LICENSE MoltenVK/MoltenVK/dynamic/dylib/macOS/libMoltenVK.dylib
 
-contents="$work/Angry Birds Trilogy.app/Contents"
+contents="$work/WarioWare Gold Recomp.app/Contents"
 mkdir -p "$contents/MacOS" "$contents/Resources" "$contents/Frameworks"
-cp "$binary" "$contents/MacOS/angry-birds-trilogy"
+cp "$binary" "$contents/MacOS/warioware-gold-recomp"
 cp "$work/MoltenVK/MoltenVK/dynamic/dylib/macOS/libMoltenVK.dylib" "$contents/Frameworks/"
 cp "$work/MoltenVK/LICENSE" "$contents/Resources/MoltenVK-LICENSE"
 cp "$here/Info.plist" "$contents/Info.plist"
@@ -42,5 +42,5 @@ cp "$here/zakuro.png" "$icons/icon_512x512.png"
 iconutil -c icns "$icons" -o "$contents/Resources/zakuro.icns"
 
 # signed for no one, which is what lets it run on Apple silicon at all
-codesign --force --deep --sign - "$work/Angry Birds Trilogy.app"
-ditto -c -k --keepParent "$work/Angry Birds Trilogy.app" "$output"
+codesign --force --deep --sign - "$work/WarioWare Gold Recomp.app"
+ditto -c -k --keepParent "$work/WarioWare Gold Recomp.app" "$output"
