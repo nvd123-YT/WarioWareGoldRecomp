@@ -75,7 +75,7 @@ jobs:
         run: |
           packaging/macos-app.sh target/release/warioware-gold-recomp "${VERSION#v}" ${{ matrix.archive }}
           ditto -x -k ${{ matrix.archive }} unpacked
-          RUST_LOG=info "unpacked/WarioWare Gold.app/Contents/MacOS/warioware-gold-recomp" --test-pattern --headless 1 --mute ${{ matrix.try }}
+          RUST_LOG=info "unpacked/WarioWare Gold Recomp.app/Contents/MacOS/warioware-gold-recomp" --test-pattern --headless 1 --mute ${{ matrix.try }}
 
       - uses: actions/upload-artifact@v7
         with:
@@ -107,8 +107,8 @@ jobs:
           Supported retail title ID (USA, Europe and Japan): 00040000001D1C00. The demo is not supported.
 
           Windows: extract warioware-gold-recomp-windows-x86_64.zip and run warioware-gold-recomp.exe.
-          macOS Apple silicon: extract warioware-gold-recomp-macos-arm64.zip and open WarioWare Gold.app.
-          macOS Intel: extract warioware-gold-recomp-macos-x86_64.zip and open WarioWare Gold.app.
+          macOS Apple silicon: extract warioware-gold-recomp-macos-arm64.zip and open WarioWare Gold Recomp.app.
+          macOS Intel: extract warioware-gold-recomp-macos-x86_64.zip and open WarioWare Gold Recomp.app.
           Linux: run WarioWareGoldRecomp-x86_64.AppImage, or extract warioware-gold-recomp-linux-x86_64.tar.gz and run ./warioware-gold-recomp.
 
           The macOS app is not notarized. On first launch, allow it in System Settings > Privacy & Security > Open Anyway.
@@ -116,7 +116,7 @@ jobs:
           if gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
             # GitHub's Releases page may have already created a draft for this tag.
             gh release upload "$TAG" dist/* --repo "$GITHUB_REPOSITORY" --clobber
-            gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --title "WarioWare Gold $TAG" --notes-file notes.md --draft=false --latest
+            gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --title "WarioWare Gold Recomp $TAG" --notes-file notes.md --draft=false --latest
           else
-            gh release create "$TAG" dist/* --repo "$GITHUB_REPOSITORY" --verify-tag --title "WarioWare Gold $TAG" --notes-file notes.md --generate-notes
+            gh release create "$TAG" dist/* --repo "$GITHUB_REPOSITORY" --verify-tag --title "WarioWare Gold Recomp $TAG" --notes-file notes.md --generate-notes
           fi
