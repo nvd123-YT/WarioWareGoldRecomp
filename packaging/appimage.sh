@@ -23,15 +23,15 @@ echo "$tool_sha256  $work/appimagetool" | sha256sum -c -
 echo "$runtime_sha256  $work/runtime" | sha256sum -c -
 chmod +x "$work/appimagetool"
 
-app=$work/AngryBirdsTrilogy.AppDir
+app=$work/WarioWareGoldRecomp.AppDir
 mkdir -p "$app/usr/bin"
-cp "$binary" "$app/usr/bin/angry-birds-trilogy"
-ln -s usr/bin/angry-birds-trilogy "$app/AppRun"
+cp "$binary" "$app/usr/bin/warioware-gold-recomp"
+ln -s usr/bin/warioware-gold-recomp "$app/AppRun"
 cp "$here/zakuro.desktop" "$here/zakuro.png" "$app/"
 
 # the update information has AppImage updaters, Gear Lever's say, follow the
 # releases
 APPIMAGE_EXTRACT_AND_RUN=1 ARCH=x86_64 "$work/appimagetool" \
     --runtime-file "$work/runtime" \
-    --updateinformation "gh-releases-zsync|nvd123-YT|AngryBirdsRecomp|latest|AngryBirdsTrilogy-x86_64.AppImage.zsync" \
+    --updateinformation "gh-releases-zsync|nvd123-YT|WarioWareGoldRecomp|latest|WarioWareGoldRecomp-x86_64.AppImage.zsync" \
     "$app" "$output"
