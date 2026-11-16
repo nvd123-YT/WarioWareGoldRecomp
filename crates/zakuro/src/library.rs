@@ -8,10 +8,10 @@ use crate::recompile::Wanted;
 /// file endings of games Zakuro opens.
 const GAME_FILES: [&str; 4] = ["3ds", "cci", "cxi", "cia"];
 
-/// Retail base-game IDs for Angry Birds Trilogy (USA and Europe).
-const SUPPORTED_GAME_IDS: [u64; 2] = [0x0004_0000_000A_E200, 0x0004_0000_000A_F400];
+/// Retail base-game ID for WarioWare Gold (USA, Europe and Japan).
+const SUPPORTED_GAME_IDS: [u64; 1] = [0x0004_0000_001D_1C00];
 
-/// Whether a file is one of the supported Angry Birds Trilogy base games.
+/// Whether a file is the supported WarioWare Gold retail game.
 pub fn supports_game(program_id: u64) -> bool {
     SUPPORTED_GAME_IDS.contains(&program_id)
 }
@@ -255,7 +255,7 @@ fn addon(path: &Path) -> Option<Result<Addon, String>> {
         return None;
     }
     if cia.contents.iter().any(|content| content.offset.is_some() && content.encrypted()) {
-        return Some(Err("Encrypted, this build needs a decrypted Angry Birds Trilogy dump".to_owned()));
+        return Some(Err("Encrypted, this build needs a decrypted WarioWare Gold dump".to_owned()));
     }
     Some(Ok(Addon { path: path.to_owned(), title_id: cia.title_id, version: cia.version }))
 }
@@ -423,14 +423,14 @@ mod tests {
     }
 
     #[test]
-    fn only_angry_birds_trilogy_retail_ids_are_supported() {
-        let usa = 0x0004_0000_000A_E200;
-        let europe = 0x0004_0000_000A_F400;
-        assert!(supports_game(usa));
-        assert!(supports_game(europe));
+    fn only_warioware_gold_retail_id_is_supported() {
+        let retail = 0x0004_0000_001D_1C00;
+        let update = 0x0004_000E_001D_1C00;
+        assert!(supports_game(retail));
+        assert!(!supports_game(0x0004_0000_001D_4500)); // WarioWare Gold demo
         assert!(!supports_game(0x0004_0000_0005_5E00)); // Pokémon Y
-        assert!(!supports_game(0x0004_000E_000A_E200)); // update, not base game
-        assert!(belongs_to_supported_game(0x0004_000E_000A_E200)); // USA update
+        assert!(!supports_game(update)); // update, not base game
+        assert!(belongs_to_supported_game(update));
         assert!(!belongs_to_supported_game(0x0004_000E_0005_5E00));
     }
 
