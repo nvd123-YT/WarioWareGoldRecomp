@@ -1,5 +1,5 @@
 # On a version tag, builds WarioWare Gold for Windows, Linux and macOS.
-name: WarioWare Gold Release
+name: WarioWare Gold Recomp Release
 
 on:
   push:
@@ -100,7 +100,7 @@ jobs:
           TAG: ${{ inputs.tag || github.ref_name }}
         run: |
           cat > notes.md <<'NOTES'
-          This is an WarioWare Gold-only desktop runtime based on Zakuro and 3dsrecomp.
+          This is a WarioWare Gold-specific desktop runtime based on Zakuro and 3dsrecomp.
 
           No game ROM, game assets, generated title-specific C code, or compiled title library is included. Use your own lawfully obtained, decrypted WarioWare Gold dump. Add it to a library folder, then use Recompile in the application; the title-specific output stays on your computer.
 
