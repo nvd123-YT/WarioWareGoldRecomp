@@ -3,13 +3,13 @@
 <plist version="1.0">
 <dict>
   <key>CFBundleName</key>
-  <string>Angry Birds Trilogy</string>
+  <string>WarioWare Gold Recomp</string>
   <key>CFBundleDisplayName</key>
-  <string>Zakuro</string>
+  <string>WarioWare Gold Recomp</string>
   <key>CFBundleIdentifier</key>
-  <string>io.github.nvd123-yt.angrybirdstrilogy</string>
+  <string>io.github.nvd123-yt.wariowaregoldrecomp</string>
   <key>CFBundleExecutable</key>
-  <string>angry-birds-trilogy</string>
+  <string>warioware-gold-recomp</string>
   <key>CFBundleIconFile</key>
   <string>zakuro</string>
   <key>CFBundlePackageType</key>
